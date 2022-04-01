@@ -178,7 +178,9 @@ const profile = ({ navigation }) => {
                     <IconButton
                       icon="key-variant"
                       color="white"
-                      onPress={() => console.log("password Pressed")}
+                      onPress={() =>
+                        console.log(navigation.navigate("ChangePass"))
+                      }
                       size={25}
                       style={{ borderColor: "white", borderWidth: 1 }}
                     />

@@ -331,21 +331,7 @@ const Login = ({ navigation, route }) => {
                 setForgotPassword(false);
               }}
             >
-              <Icon
-                name={"keyboard-backspace"}
-                color={"#fff"}
-                size={normalize(25)}
-              />
-              <Text
-                style={{
-                  fontFamily: "OpenSansCondensedBold",
-                  marginLeft: normalize(10),
-                  color: "#fff",
-                  fontSize: normalize(14),
-                }}
-              >
-                Back to login !
-              </Text>
+              <Icon name={"chevron-left"} color={"#fff"} size={normalize(25)} />
             </TouchableOpacity>
           ) : null}
 
