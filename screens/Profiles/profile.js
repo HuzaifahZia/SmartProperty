@@ -52,9 +52,6 @@ const profile = ({ navigation }) => {
 
   const { width, height } = Dimensions.get("window");
   const SCREEN_WIDTH = width < height ? width : height;
-  const ITEM_HEIGHT = normalize(150);
-  const ITEM_MARGIN = normalize(35);
-  const CARD_MARGIN = normalize(25);
 
   const getCurrentUser = (userToken) => {
     console.log(userToken, "token in get user");

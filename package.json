@@ -22,6 +22,8 @@
     "react-native": "0.64.3",
     "react-native-countdown-circle-timer": "^3.0.6",
     "react-native-gesture-handler": "~2.1.0",
+    "react-native-mask-input": "^1.2.0",
+    "react-native-mask-text": "^0.7.0",
     "react-native-otp-textinput": "0.0.8",
     "react-native-paper": "^4.11.2",
     "react-native-responsive-fontsize": "^0.5.1",
@@ -31,6 +33,7 @@
     "react-native-star-rating": "^1.1.0",
     "react-native-status-bar-height": "^2.6.0",
     "react-native-svg": "^12.1.1",
+    "react-native-text-input-mask": "^3.1.4",
     "react-native-vector-icons": "^9.0.0",
     "react-native-web": "0.17.1",
     "styled-components": "^5.3.5"
