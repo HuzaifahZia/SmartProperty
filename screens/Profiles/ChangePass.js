@@ -9,26 +9,24 @@ import {
   Dimensions,
   ScrollView,
   SafeAreaView,
+  StyleSheet,
 } from "react-native";
 const { width, height } = Dimensions.get("window");
 import { FlatList } from "react-native-gesture-handler";
-import styles from "./styles";
 import { normalize } from "../../Normalizer";
 import { COLORS } from "../../constants";
-import axios from "axios";
-import { RFValue } from "react-native-responsive-fontsize";
-import * as theme from "../../components/Theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Alert from "../../components/Alert/Alert";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors } from "react-native-paper";
 
-const ChangePass = ({ navigation, route }) => {
+const ChangePass = ({ navigation }) => {
   const [open, setOpen] = useState(false);
   const [oldPass, setoldPass] = useState("");
   const [newPass, setnewPass] = useState("");
   const [confirmPass, setconfirmPass] = useState("");
   const [alert, setAlert] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [radixId, setRadixId] = useState("0");
@@ -165,7 +163,62 @@ const ChangePass = ({ navigation, route }) => {
             onChangeText={(confirmPass) => setconfirmPass(confirmPass)}
           />
         </View>
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        >
+          <Text style={styles.loginText}>Confirm</Text>
+        </TouchableOpacity>
       </View>
     );
 };
 export default ChangePass;
+const styles = StyleSheet.create({
+  inputView: {
+    flexDirection: "row",
+    backgroundColor: "#151B22",
+    borderRadius: normalize(30),
+    borderWidth: normalize(3),
+    borderColor: "#FFF",
+    width: "70%",
+    height: normalize(45),
+    marginBottom: normalize(20),
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+
+  TextInput: {
+    width: "100%",
+    height: normalize(50),
+    paddingLeft: 20,
+    fontFamily: "OpenSansCondensedBold",
+    color: "#FFFFFF",
+    fontSize: normalize(14),
+  },
+
+  Registration_button: {
+    fontFamily: "OpenSansCondensedBold",
+    color: "#FFFFFF",
+    fontSize: normalize(14),
+    height: normalize(30),
+    marginTop: normalize(30),
+    textDecorationLine: "underline",
+  },
+
+  loginBtn: {
+    width: normalize(121),
+    borderRadius: normalize(25),
+    backgroundColor: "#615ae8",
+    height: normalize(40),
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: normalize(40),
+  },
+  loginText: {
+    fontFamily: "OpenSansCondensedBold",
+    color: "#FFFFFF",
+    fontSize: normalize(14),
+  },
+});

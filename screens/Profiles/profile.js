@@ -91,7 +91,7 @@ const profile = ({ navigation }) => {
                 <Text style={styles.userType}>USER TYPE</Text>
               </View>
             </View>
-            <View style={{ flex: 1, resizemode: "contained" }}>
+            <View>
               <Card
                 style={{
                   borderRadius: normalize(30),
@@ -113,7 +113,7 @@ const profile = ({ navigation }) => {
                         ]}
                         right={() => (
                           <TouchableOpacity
-                            onPress={() => console.log("pressed")}
+                            onPress={() => {navigation.navigate("EditProfile")}}
                           >
                             <List.Icon
                               icon="pencil"
@@ -178,9 +178,7 @@ const profile = ({ navigation }) => {
                     <IconButton
                       icon="key-variant"
                       color="white"
-                      onPress={() =>
-                        console.log(navigation.navigate("ChangePass"))
-                      }
+                      onPress={() => {navigation.navigate("ChangePass")}}
                       size={25}
                       style={{ borderColor: "white", borderWidth: 1 }}
                     />
@@ -188,7 +186,9 @@ const profile = ({ navigation }) => {
                       icon="upload"
                       color="white"
                       size={25}
-                      onPress={() => console.log("upload Pressed")}
+                      onPress={() => {
+                        navigation.navigate("AddProperty");
+                      }}
                       style={{
                         borderColor: "white",
                         borderWidth: 1,

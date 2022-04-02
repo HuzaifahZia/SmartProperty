@@ -6,8 +6,6 @@ import Tabs from "./navigation/tabs";
 import Login from './screens/Login/Login';
 import Register from './screens/Register/Register';
 
-
-
 const Stack = createStackNavigator();
 
 const App = () => {
