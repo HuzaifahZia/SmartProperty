@@ -15,32 +15,11 @@ import { StyleSheet } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { COLORS } from "../../constants";
+import { COLORS, icons } from "../../constants";
 import { Button, IconButton, Card, List } from "react-native-paper";
 import { color } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
 
-const profile = ({ navigation }) => {
-  const [edit, setEdit] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phonenumber, setphonenumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [username, setusername] = useState("");
-  const [Purpose, setpurpose] = useState("");
-  const [PropertyType, setpropertytype] = useState("");
-  const [PropertySubType, setpropertysubtype] = useState("");
-  const [City, setcity] = useState("");
-  const [Location, setlocation] = useState("");
-  const [ZipCode, setzipcode] = useState("");
-  const [PropertyTitle, setpropertytitle] = useState("");
-  const [Description, setdescription] = useState("");
-  const [Price, setprice] = useState("");
-  const [LandArea, setlandarea] = useState("");
-  const [Unit, setunit] = useState("");
-
+const PProfile = ({ navigation }) => {
   useEffect(() => {
     AsyncStorage.getItem("token").then((token) => {
       if (token != null) {
@@ -104,26 +83,6 @@ const profile = ({ navigation }) => {
                   <View>
                     <List.Section>
                       <List.Item
-                        style={[
-                          styles.lstItem,
-                          { marginBottom: normalize(-40) },
-                        ]}
-                        right={() => (
-                          <TouchableOpacity
-                            onPress={() => {navigation.navigate("EditProfile")}}
-                          >
-                            <List.Icon
-                              icon="pencil"
-                              color="white"
-                              style={{
-                                backgroundColor: COLORS.background,
-                                borderRadius: normalize(100),
-                              }}
-                            />
-                          </TouchableOpacity>
-                        )}
-                      />
-                      <List.Item
                         style={styles.lstItem}
                         titleStyle={{ color: "white" }}
                         title="Full-Name"
@@ -160,24 +119,23 @@ const profile = ({ navigation }) => {
                       justifyContent: "center",
                     }}
                   >
-                    <Button
-                      mode="outlined"
-                      color={COLORS.background}
-                      style={{
-                        borderColor: COLORS.white,
-                        height: normalize(20),
+                    <IconButton
+                      icon={icons.briefcase}
+                      color="white"
+                      onPress={() => {
+                        navigation.navigate("Portfolio");
                       }}
-                      labelStyle={{ color: "white" }}
-                      onPress={() => console.log("Pressed")}
-                    >
-                      Press me
-                    </Button>
+                      size={25}
+                      style={{ borderColor: "white", borderWidth: 1 }}
+                    />
                     <IconButton
                       icon="key-variant"
                       color="white"
-                      onPress={() => {navigation.navigate("ChangePass")}}
+                      onPress={() => {
+                        navigation.navigate("ChangePass");
+                      }}
                       size={25}
-                      style={{ borderColor: "white", borderWidth: 1 }}
+                      style={styles.Optionbtn}
                     />
                     <IconButton
                       icon="upload"
@@ -186,22 +144,16 @@ const profile = ({ navigation }) => {
                       onPress={() => {
                         navigation.navigate("AddProperty");
                       }}
-                      style={{
-                        borderColor: "white",
-                        borderWidth: 1,
-                        marginLeft: normalize(20),
-                      }}
+                      style={styles.Optionbtn}
                     />
                     <IconButton
-                      icon="dots-horizontal"
+                      icon="pencil"
                       color="white"
-                      onPress={() => console.log("About Pressed")}
-                      size={25}
-                      style={{
-                        borderColor: "white",
-                        borderWidth: 1,
-                        marginLeft: normalize(20),
+                      onPress={() => {
+                        navigation.navigate("EditProfile");
                       }}
+                      size={25}
+                      style={styles.Optionbtn}
                     />
                   </View>
                 </Card.Content>
@@ -264,7 +216,7 @@ const profile = ({ navigation }) => {
   );
 };
 
-export default profile;
+export default PProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -308,6 +260,11 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontFamily: "OpenSansCondensedLight",
     fontSize: normalize(14),
+  },
+  Optionbtn:{
+    borderColor: "white",
+    borderWidth: 1,
+    marginLeft: normalize(20),
   },
   body: {
     justifyContent: "space-evenly",

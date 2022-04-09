@@ -113,7 +113,7 @@ const AddProperty = ({ navigation }) => {
             icon="chevron-left"
             color={COLORS.white}
             onPress={() => {
-              navigation.navigate("profile");
+              navigation.navigate("PProfile");
             }}
           />
         </View>

@@ -10,6 +10,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { normalize } from "../../Normalizer";
 // import { normalize } from "react-native-responsive-fontsize";
 import * as theme from "../../components/Theme";
+import { COLORS } from "../../constants";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingLeft: normalize(20),
     fontFamily: "OpenSansCondensedBold",
-    color: "#FFFFFF",
+    color: COLORS.black,
     fontSize: normalize(14),
   },
   twoInputView: {

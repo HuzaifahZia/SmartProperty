@@ -112,7 +112,7 @@ const ChangePass = ({ navigation }) => {
           <IconButton
             icon="chevron-left"
             color={COLORS.white}
-            onPress={() => {navigation.navigate("profile")}}
+            onPress={() => {navigation.navigate("PProfile")}}
           />
         </View>
         <View>

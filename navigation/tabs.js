@@ -5,30 +5,33 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { TabIcon } from "../components";
 import { Home, Portfolio, Market} from "../screens";
-import profile from "../screens/Profiles/profile";
+import PProfile from "../screens/Profiles/profile";
 import { COLORS, icons } from "../constants";
 import ChangePass from "../screens/Profiles/ChangePass";
 import AddProperty from "../screens/Profiles/AddProperty";
 import EditProfile from "../screens/Profiles/EditProfile";
+import Login from "../screens/Login/Login";
 import { normalize } from "../Normalizer";
 import { Button, IconButton, Card, List } from "react-native-paper";
 
 const stack = createStackNavigator();
 function Profile() { 
-  return(
-  <NavigationContainer independent={true}>
-    <stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName={"profile"}
-    >
-      <stack.Screen name="profile" component={profile} />
-      <stack.Screen name="AddProperty" component={AddProperty} />
-      <stack.Screen name="ChangePass" component={ChangePass} />
-      <stack.Screen name="EditProfile" component={EditProfile}/>
-    </stack.Navigator>
-  </NavigationContainer>
+  return (
+    <NavigationContainer independent={true}>
+      <stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={"PProfile"}
+      >
+        <stack.Screen name="PProfile" component={PProfile} />
+        <stack.Screen name="AddProperty" component={AddProperty} />
+        <stack.Screen name="ChangePass" component={ChangePass} />
+        <stack.Screen name="EditProfile" component={EditProfile} />
+        <stack.Screen name="Portfolio" component={Portfolio} />
+        <stack.Screen name="Login" component={Login} />
+      </stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -56,7 +59,7 @@ const Tabs = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Portfolio"
         component={Portfolio}
         options={{
@@ -70,7 +73,7 @@ const Tabs = () => {
             );
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Trade"
         component={Portfolio}

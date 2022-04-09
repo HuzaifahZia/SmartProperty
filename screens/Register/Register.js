@@ -1,15 +1,5 @@
-import React, { useState } from "react";
-import {
-  View,
-  Image,
-  TextInput,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
+import React, {useEffect, useState } from "react";
+import { View, Image, TextInput, Text, TouchableOpacity, ActivityIndicator, Dimensions, ScrollView, SafeAreaView,} from "react-native";
 import { COLORS } from "../../constants";
 import styles from "./styles";
 import { normalize } from "../../Normalizer";
@@ -20,29 +10,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Alert from "../../components/Alert/Alert";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Register_Translation from "./Register_Translation";
-import MaskInput from "react-native-mask-input";
+import DatePicker from "react-native-datepicker";
+import { LogBox } from 'react-native';
+
 
 const { width, height } = Dimensions.get("window");
 const Register = ({ navigation, route }) => {
-  const [maskedValue, setMaskedValue] = useState("");
-  const [unMaskedValue, setUnmaskedValue] = useState("");
   const [open, setOpen] = useState(false);
   const [userType, setUserType] = useState("User type");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
   const [phonenumber, setphonenumber] = useState("");
   const [email, setEmail] = useState("");
   const [cnic, setCnic] = useState("");
-  const [DOB, setDOB] = useState("");
-  const [vat, setVat] = useState("0");
-  const [vatCheck, setVatCheck] = useState(false);
+  const [DOB, setDOB] = useState("09-10-2021");
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [radixId, setRadixId] = useState("0");
-  const [radixPwd, setRadixPwd] = useState("0");
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["Animated: `useNativeDriver`"]);
+  }, []);
   const register = () => {
     var form = new FormData();
     var user = "0";
@@ -52,7 +41,7 @@ const Register = ({ navigation, route }) => {
       condition =
         name != "" &&
         lastName != "" &&
-        address != "" &&
+        cnic != "" &&
         phonenumber != "" &&
         email != "" &&
         password != "";
@@ -64,7 +53,8 @@ const Register = ({ navigation, route }) => {
       form.append("first_name", `${name}`);
       form.append("last_name", `${lastName}`);
       form.append("email", `${email.toLowerCase()}`);
-      form.append("address", `${address}`);
+      form.append("cnic", `${cnic}`);
+      form.append("DOB", `${DOB}`);
       form.append("phone_no", `${phonenumber}`);
       fetch("http://192.168.137.44:8000/auth/register/", {
         method: "POST",
@@ -170,9 +160,11 @@ const Register = ({ navigation, route }) => {
               >
                 <TextInput
                   style={styles.TextInput}
-                  placeholder={"Address"}
+                  keyboardType="numeric"
+                  placeholder={"CNIC"}
                   placeholderTextColor={COLORS.text}
-                  onChangeText={(address) => setAddress(address)}
+                  onChangeText={(cnic) => setCnic(cnic)}
+                  maxLength={13}
                 />
               </View>
               <View style={styles.twoInputView}>
@@ -180,6 +172,8 @@ const Register = ({ navigation, route }) => {
                   <TextInput
                     style={styles.TextInput}
                     placeholder={"Phone No"}
+                    keyboardType="numeric"
+                    maxLength={13}
                     placeholderTextColor={COLORS.text}
                     onChangeText={(phonenumber) => setphonenumber(phonenumber)}
                   />
@@ -199,36 +193,35 @@ const Register = ({ navigation, route }) => {
                   { width: normalize(338), alignSelf: "center" },
                 ]}
               >
-                <MaskInput
-                  keyboardType="numeric"
-                  placeholderTextColor={COLORS.text}
+                <DatePicker
                   style={styles.TextInput}
-                  value={cnic}
-                  onChange={(text) => {
-                    setCnic(text); // you can use the unmasked value as well
-
-                    // assuming you typed "9" all the way:
-                    console.log(masked); // (99) 99999-9999
-                    console.log(unmasked); // 99999999999
-                    console.log(obfuscated); // (99) 99999-9999 (there's no obfuscation on this mask example)
+                  date={DOB}
+                  mode="date"
+                  placeholder="select date"
+                  format="DD/MM/YYYY"
+                  minDate="01-01-1900"
+                  maxDate="01-01-2000"
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                  showIcon={false}
+                  customStyles={{
+                    dateInput: {
+                      marginTop: normalize(-4),
+                      alignItems: "flex-start",
+                      borderWidth: 0,
+                    },
+                    placeholderText: {
+                      fontSize: normalize(14),
+                      color: COLORS.text,
+                    },
+                    dateText: {
+                      fontSize: normalize(14),
+                      color: COLORS.text,
+                    },
                   }}
-                  mask={[
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    "-",
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    /\d/,
-                    "-",
-                    /\d/,
-                  ]}
+                  onDateChange={(DOB) => {
+                    setDOB(DOB);
+                  }}
                 />
               </View>
               <View
