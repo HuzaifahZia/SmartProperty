@@ -4,9 +4,26 @@ import { View, Text, FlatList } from "react-native";
 import Slider from "../components/Carousel";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import { ScrollView } from "react-native-gesture-handler";
-import { StyleSheet, Dimensions, StatusBar, Platform, TouchableHighlight, TouchableOpacity, Image,} from "react-native";
+import {
+  StyleSheet,
+  Dimensions,
+  StatusBar,
+  Platform,
+  TouchableHighlight,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { normalize } from "../Normalizer";
-import { Searchbar, Modal, Portal, Avatar, Button, Card, Title, Paragraph,} from "react-native-paper";
+import {
+  Searchbar,
+  Modal,
+  Portal,
+  Avatar,
+  Button,
+  Card,
+  Title,
+  Paragraph,
+} from "react-native-paper";
 import data from "../components/data";
 import StarRating from "react-native-star-rating";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -164,6 +181,32 @@ const Portfolio = () => {
               <View style={styles.pcontainer}>
                 <Image style={styles.photo} source={{ uri: item.imgUrl }} />
                 <View style={styles.detailContainer}>
+                  <View style={styles.iconContainer}>
+                    <Text style={styles.iconInfo}>3</Text>
+                    <Icon
+                      name={"bed-empty"}
+                      color={COLORS.white}
+                      style={{ marginRight: normalize(10) }}
+                      size={normalize(20)}
+                    />
+                    <Text style={styles.iconInfo}>2</Text>
+                    <Icon
+                      name={"shower"}
+                      color={COLORS.white}
+                      size={normalize(20)}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      alignSelf: "baseline",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    <Text style={styles.iconInfo}>22 marla</Text>
+                  </View>
                 </View>
                 <Text style={styles.title}>{item.title}</Text>
               </View>
@@ -172,7 +215,7 @@ const Portfolio = () => {
         }}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
-        columnWrapperStyle={{flex:1,justifyContent:"space-evenly"}}
+        columnWrapperStyle={{ flex: 1, justifyContent: "space-evenly" }}
         key={"1"}
       />
     </ScrollView>
@@ -193,17 +236,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: normalize(15),
     width: (SCREEN_WIDTH - (numColums + 1) * CARD_MARGIN) / numColums,
-    height: ITEM_HEIGHT + normalize(70),
+
     borderRadius: normalize(15),
+    paddingHorizontal: normalize(10),
+  },
+  iconContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#43494F",
+    borderRadius: normalize(10),
+    alignSelf: "baseline",
+    justifyContent: "space-evenly",
   },
   detailContainer: {
     flex: 1,
     flexDirection: "row",
-    paddingBottom: normalize(5),
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginLeft: ITEM_MARGIN,
+    marginLeft: normalize(15),
     marginTop: normalize(5),
+    alignSelf: "baseline",
   },
   photo: {
     marginTop: normalize(15),
@@ -215,8 +266,13 @@ const styles = StyleSheet.create({
     // flex: 1,
     fontSize: normalize(14),
     fontFamily: "OpenSansCondensedLight",
+    textAlign: "center",
+    color: "white",
+  },
+  iconInfo: {
+    fontSize: normalize(14),
+    fontFamily: "OpenSansCondensedLight",
     textAlign: "left",
     color: "white",
-    marginTop: 5,
   },
 });
