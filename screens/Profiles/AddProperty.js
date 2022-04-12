@@ -21,6 +21,8 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors, IconButton } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import { PickerItem } from "react-native-woodpicker";
+import { Picker } from "react-native-woodpicker";
 
 const AddProperty = ({ navigation }) => {
   const [open, setOpen] = useState(false);
@@ -33,6 +35,13 @@ const AddProperty = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [radixId, setRadixId] = useState("0");
   const [radixPwd, setRadixPwd] = useState("0");
+  const [Type, setType] = useState();
+  const TypeList = [
+    { label: "Residential", value: "Residential" },
+    { label: "Plot", value: "Plot" },
+    { label: "Commercial", value: "Commercial" },
+  ];
+
   const addProperty = () => {
     var form = new FormData();
     var user = "0";
@@ -138,7 +147,107 @@ const AddProperty = ({ navigation }) => {
               width: "100%",
             }}
           >
-            <View
+            <View style={styles.twoView}>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Sale/Rent"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Zipcode"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+            </View>
+            <View style={styles.twoView}>
+              <View style={styles.twoinputView}>
+                {/* <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Type"
+                  placeholderTextColor="#FFFFFF"
+                /> */}
+                <Picker
+                  item={Type}
+                  items={TypeList}
+                  style={{
+                    height: normalize(50),
+                    paddingLeft: 20,
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                  textInputStyle={{
+                    height: normalize(50),
+                    fontFamily: "OpenSansCondensedBold",
+                    color: "#FFFFFF",
+                    fontSize: normalize(14),
+                    justifyContent: "center",
+                  }}
+                  onItemChange={setType}
+                  title="Property Type"
+                  placeholder="Type"
+                  isNullable={false}
+                  mode="dropdown"
+                />
+              </View>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Sub-Type"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+            </View>
+            <View style={styles.inputView}>
+              <TextInput
+                style={[styles.TextInput, { width: "100%" }]}
+                placeholder="Address"
+                placeholderTextColor="#FFFFFF"
+              />
+            </View>
+            <View style={styles.twoView}>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="City"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Society"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+            </View>
+            <View style={styles.twoView}>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Size"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+              <View style={styles.twoinputView}>
+                <TextInput
+                  style={[styles.TextInput, { width: "100%" }]}
+                  placeholder="Price"
+                  placeholderTextColor="#FFFFFF"
+                />
+              </View>
+            </View>
+            <View style={styles.inputView}>
+              <TextInput
+                style={[styles.TextInput, { width: "100%" }]}
+                placeholder="Description"
+                placeholderTextColor="#FFFFFF"
+              />
+            </View>
+            {/* <View
               style={[
                 styles.inputView,
                 { paddingRight: 20 },
@@ -200,7 +309,7 @@ const AddProperty = ({ navigation }) => {
               }}
             >
               <Text style={styles.loginText}>Confirm</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
         <StatusBar backgroundColor={COLORS.background} />
@@ -222,14 +331,32 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
   },
-
+  twoinputView: {
+    backgroundColor: "#151B22",
+    borderRadius: normalize(30),
+    borderWidth: normalize(3),
+    borderColor: "#FFF",
+    width: "45%",
+    height: normalize(50),
+    alignSelf: "baseline",
+    alignItems: "center",
+  },
+  twoView: {
+    height: normalize(50),
+    width: "90%",
+    marginBottom: normalize(20),
+    alignSelf: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   TextInput: {
-    width: "100%",
     height: normalize(50),
     paddingLeft: 20,
     fontFamily: "OpenSansCondensedBold",
     color: "#FFFFFF",
     fontSize: normalize(14),
+    justifyContent: "center",
   },
 
   Registration_button: {
