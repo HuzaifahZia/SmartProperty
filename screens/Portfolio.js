@@ -68,93 +68,6 @@ const Portfolio = () => {
         paddingBottom: normalize(120),
       }}
     >
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={containerStyle}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              hideModal();
-            }}
-            style={{
-              alignSelf: "flex-start",
-              top: normalize(-8),
-              left: normalize(-8),
-            }}
-          >
-            <Icon name={"close-circle"} color={"black"} size={normalize(30)} />
-          </TouchableOpacity>
-
-          <Card
-            style={{
-              margin: normalize(5),
-              borderRadius: normalize(30),
-            }}
-          >
-            <Card.Cover
-              style={{
-                resizeMode: "contain",
-                borderTopEndRadius: normalize(30),
-                borderTopStartRadius: normalize(30),
-                borderRadius: normalize(30),
-              }}
-              source={{ uri: "https://picsum.photos/700" }}
-            />
-            <Card.Content>
-              <Title>Card title</Title>
-              <Paragraph>
-                Description: 4 Rooms | 5 Bathrooms | 1 Drawing Room | 2 Kitchens
-              </Paragraph>
-            </Card.Content>
-          </Card>
-          <View
-            style={{
-              justifyContent: "center",
-            }}
-          >
-            <Title
-              style={{
-                paddingLeft: normalize(20),
-              }}
-            >
-              Related
-            </Title>
-            <FlatList
-              horizontal
-              data={data.filter((item) => item.title.includes(searchQuery))}
-              style={styles.container}
-              contentContainerStyle={{
-                height: 200,
-              }}
-              renderItem={({ item, index }) => {
-                return (
-                  <TouchableHighlight
-                    underlayColor="none"
-                    onPress={() => {
-                      showModal();
-                    }}
-                  >
-                    <View
-                      style={[styles.pcontainer, { marginLeft: normalize(10) }]}
-                    >
-                      <Image
-                        style={styles.photo}
-                        source={{ uri: item.imgUrl }}
-                      />
-                      <Text style={styles.title}>{item.title}</Text>
-                    </View>
-                  </TouchableHighlight>
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-              key={"1"}
-            />
-          </View>
-        </Modal>
-      </Portal>
       <Searchbar
         style={{
           borderRadius: normalize(30),
@@ -172,29 +85,26 @@ const Portfolio = () => {
         style={styles.container}
         renderItem={({ item, index }) => {
           return (
-            <TouchableHighlight
-              underlayColor="none"
-              onPress={() => {
-                showModal();
-              }}
-            >
+            <TouchableHighlight underlayColor="none">
               <View style={styles.pcontainer}>
                 <Image style={styles.photo} source={{ uri: item.imgUrl }} />
+                <Text style={styles.price}>1.7 crore</Text>
+                <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.detailContainer}>
                   <View style={styles.iconContainer}>
-                    <Text style={styles.iconInfo}>3</Text>
                     <Icon
                       name={"bed-empty"}
                       color={COLORS.white}
                       style={{ marginRight: normalize(10) }}
                       size={normalize(20)}
                     />
-                    <Text style={styles.iconInfo}>2</Text>
+                    <Text style={styles.iconInfo}>3</Text>
                     <Icon
                       name={"shower"}
                       color={COLORS.white}
                       size={normalize(20)}
                     />
+                    <Text style={styles.iconInfo}>2</Text>
                   </View>
                   <View
                     style={{
@@ -202,13 +112,18 @@ const Portfolio = () => {
                       flexDirection: "row",
                       alignItems: "center",
                       alignSelf: "baseline",
-                      justifyContent: "space-evenly",
+                      justifyContent: "flex-end",
                     }}
                   >
+                    <Icon
+                      name={"arrow-expand"}
+                      color={COLORS.white}
+                      size={normalize(20)}
+                      style={{ marginRight: normalize(4) }}
+                    />
                     <Text style={styles.iconInfo}>22 marla</Text>
                   </View>
                 </View>
-                <Text style={styles.title}>{item.title}</Text>
               </View>
             </TouchableHighlight>
           );
@@ -236,7 +151,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: normalize(15),
     width: (SCREEN_WIDTH - (numColums + 1) * CARD_MARGIN) / numColums,
-
     borderRadius: normalize(15),
     paddingHorizontal: normalize(10),
   },
@@ -252,7 +166,7 @@ const styles = StyleSheet.create({
   detailContainer: {
     flex: 1,
     flexDirection: "row",
-    marginLeft: normalize(15),
+    marginHorizontal: normalize(7),
     marginTop: normalize(5),
     alignSelf: "baseline",
   },
@@ -264,9 +178,20 @@ const styles = StyleSheet.create({
   },
   title: {
     // flex: 1,
-    fontSize: normalize(14),
+    fontSize: normalize(15),
+    marginLeft: normalize(10),
     fontFamily: "OpenSansCondensedLight",
-    textAlign: "center",
+    textAlign: "left",
+    alignSelf: "flex-start",
+    color: "#D4D4D4",
+  },
+  price: {
+    // flex: 1,
+    fontSize: normalize(14),
+    marginLeft: normalize(10),
+    fontFamily: "OpenSansCondensedLight",
+    textAlign: "right",
+    alignSelf: "flex-start",
     color: "white",
   },
   iconInfo: {
