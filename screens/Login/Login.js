@@ -73,27 +73,36 @@ const Login = ({ navigation, route }) => {
   };
 
   const handleLogin = () => {
-    var form = new FormData();
-    form.append("username", `${email.toLowerCase()}`);
-    form.append("password", `${password}`);
     if (email == "" || password == "") {
       // edited line added
-      navigation.navigate("MainLayout");
-      //setAlert(true);
-      //setAlertMessage("PLEASE ENTER EMAIL AND PASSWORD");
-      //setLoading(false);
+      // navigation.navigate("MainLayout");
+      setAlert(true);
+      setAlertMessage("PLEASE ENTER EMAIL AND PASSWORD");
+      setLoading(false);
     } else {
-      setLoading(true);
-      fetch("http://192.168.137.44:8000/auth/login/", {
-        method: "POST",
-        body: form,
-      })
-        .then((r) =>
-          r.json().then(async (data) => {
-            if (data.token) {
-              console.log(data.token);
-              AsyncStorage.setItem("token", JSON.stringify(data.token));
-              setToken(data.token);
+      //setLoading(true);
+
+      // fetch("http://127.0.0.1:8000/api/user/login/", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     email: email,
+      //     password: password,
+      //   }),
+      // })
+      console.log(email, password, "email and password");
+      axios
+        .post("http://127.0.0.1:8000/api/user/login/", {
+          email: email,
+          password: password,
+        })
+        .then((res) =>
+          {
+            console.log(res.data, "res");
+            if (res.data.token.access) {
+              console.log(data.token.access);
+              AsyncStorage.setItem("accesstoken", JSON.stringify(res.data.token.access));
+              AsyncStorage.setItem("refreshtoken", JSON.stringify(res.data.token.refresh));
+              setToken(res.data.token);
             } else {
               setEmail("");
               setPassword("");
@@ -101,11 +110,13 @@ const Login = ({ navigation, route }) => {
               setAlertMessage("please enter valid credentials");
               setLoading(false);
             }
-          })
+          }
         )
         .catch((err) => {
+          
           setAlert(true);
-          setAlertMessage(err);
+          setAlertMessage("request failed");
+          //setAlertMessage(err.response.data.errors.non_field_errors);
           setLoading(false);
         });
     }

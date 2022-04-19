@@ -105,12 +105,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   username: {
-    color: theme.red,
+    color: theme.purple,
     fontFamily: "OpenSansCondensedBold",
     fontSize: normalize(16),
   },
   userType: {
-    color: theme.red,
+    color: theme.purple,
     fontFamily: "OpenSansCondensedLight",
     fontSize: normalize(14),
   },

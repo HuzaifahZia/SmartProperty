@@ -1,5 +1,8 @@
 {
   "expo": {
-    "name": "SmartProperty"
+    "name": "SmartProperty",
+    "android": {
+      "package": "com.huzaifah.smartproperty"
+    }
   }
 }

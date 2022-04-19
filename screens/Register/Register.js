@@ -16,8 +16,6 @@ import { LogBox } from 'react-native';
 
 const { width, height } = Dimensions.get("window");
 const Register = ({ navigation, route }) => {
-  const [open, setOpen] = useState(false);
-  const [userType, setUserType] = useState("User type");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phonenumber, setphonenumber] = useState("");
@@ -27,7 +25,6 @@ const Register = ({ navigation, route }) => {
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     LogBox.ignoreLogs(["Animated: `useNativeDriver`"]);
@@ -48,46 +45,27 @@ const Register = ({ navigation, route }) => {
     }
     console.log(condition);
     if (condition) {
-      form.append("username", `${email.toLowerCase()}`);
-      form.append("password", `${password}`);
-      form.append("first_name", `${name}`);
-      form.append("last_name", `${lastName}`);
-      form.append("email", `${email.toLowerCase()}`);
-      form.append("cnic", `${cnic}`);
-      form.append("DOB", `${DOB}`);
-      form.append("phone_no", `${phonenumber}`);
-      fetch("http://192.168.137.44:8000/auth/register/", {
+      fetch("http://127.0.0.1:8000/api/user/register/", {
         method: "POST",
-        body: form,
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          phone: phonenumber,
+          cnic: cnic,
+          password: password,
+          password2: password,
+        }),
       })
-        .then((r) =>
-          r.json().then((data) => {
-            console.log(data);
-            if (data.token) {
-              console.log(data.token);
-              setLoading(false);
-              // AsyncStorage.setItem('token',JSON.stringify(data.token));
-              // AsyncStorage.setItem('userRole',JSON.stringify(""));
-              navigation.navigate("Login");
-            } else if (data.email) {
-              setLoading(false);
-              setAlert(true);
-              setAlertMessage(data["email"][0]);
-            } else {
-              setLoading(false);
-              setAlert(true);
-              setAlertMessage("One or more field is invalid");
-            }
-          })
-        )
+        .then((res) => {
+          navigation.navigate("MainLayout");
+          console.log(res.data);
+        })
         .catch(function (error) {
-          setLoading(false);
           console.log(error, "register");
           setAlert(true);
-          setAlertMessage("User Already exist with this email!");
+          setAlertMessage(error);
         });
     } else {
-      setLoading(false);
       setAlert(true);
       setAlertMessage("One or more fields are invalid");
     }
@@ -96,25 +74,7 @@ const Register = ({ navigation, route }) => {
     setAlert(false);
     setAlertMessage("");
   };
-  function LoadingIndicatorView() {
-    // return <ActivityIndicator
-    //           color={theme.red}
-    //           size="large"
-    //           style={styles.activityIndicatorStyle}
-    //         />
-    return (
-      <View style={styles.activityIndicatorStyle}>
-        <Image
-          style={{ width: normalize(414), height: normalize(736) }}
-          source={require("../../assets/loading.gif")}
-        />
-      </View>
-    );
-  }
 
-  if (loading) {
-    return LoadingIndicatorView();
-  } else
     return (
       <ScrollView
         style={{ flex: 1, backgroundColor: COLORS.background }}
@@ -252,7 +212,6 @@ const Register = ({ navigation, route }) => {
           <TouchableOpacity
             style={styles.loginBtn}
             onPress={() => {
-              setLoading(true);
               register();
             }}
           >
