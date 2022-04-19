@@ -39,7 +39,7 @@ const ITEM_HEIGHT = normalize(150);
 const ITEM_MARGIN = normalize(35);
 const CARD_MARGIN = normalize(25);
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
   const [visible, setVisible] = React.useState(false);
@@ -120,13 +120,18 @@ const Home = () => {
                       name={"arrow-expand"}
                       color={COLORS.white}
                       size={normalize(30)}
-                      style={{marginRight: normalize(9)}}
+                      style={{ marginRight: normalize(9) }}
                     />
                     <Text style={styles.iconInfo}>22 marla</Text>
                   </View>
                 </View>
               </View>
-              <TouchableHighlight style={styles.chat}>
+              <TouchableHighlight
+                style={styles.chat}
+                onPress={() => {
+                  navigation.navigate("ViewProperty", {item:item});
+                }}
+              >
                 <Text style={styles.chattxt}>Buy</Text>
               </TouchableHighlight>
             </View>
@@ -185,7 +190,7 @@ const styles = StyleSheet.create({
   photo: {
     marginTop: normalize(10),
     height: normalize(400),
-    width: "100%", 
+    width: "100%",
     borderRadius: normalize(35),
   },
   title: {
