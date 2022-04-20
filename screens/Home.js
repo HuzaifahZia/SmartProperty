@@ -139,6 +139,7 @@ const Home = ({ navigation }) => {
         }}
         keyExtractor={(item, index) => index.toString()}
       />
+      
     </ScrollView>
   );
 };

@@ -23,7 +23,6 @@ import { Colors, IconButton } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 
 const ChangePass = ({ navigation }) => {
-  const [open, setOpen] = useState(false);
   const [oldPass, setoldPass] = useState("");
   const [newPass, setnewPass] = useState("");
   const [confirmPass, setconfirmPass] = useState("");
@@ -31,46 +30,36 @@ const ChangePass = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(true);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [radixId, setRadixId] = useState("0");
-  const [radixPwd, setRadixPwd] = useState("0");
   const changePass = () => {
-    var form = new FormData();
-    var user = "0";
-
     var condition = false;
-    if (user == "0") {
-      condition = oldPass != "" && newPass != "" && confirmPass != "";
+    if (oldPass != "" && newPass != "" && confirmPass != "") {
+      condition = true;
     }
-    console.log(condition);
     if (condition) {
-      form.append("oldPass", `${oldPass}`);
-      form.append("newPass", `${newPass}`);
-      form.append("confirmPass", `${confirmPass}`);
-      fetch("http://192.168.137.44:8000/auth/register/", {
-        method: "POST",
-        body: form,
-      })
-        .then((r) =>
-          r.json().then((data) => {
-            console.log(data);
-            if (data.token) {
-              console.log(data.token);
-              setLoading(false);
-              // AsyncStorage.setItem('token',JSON.stringify(data.token));
-              // AsyncStorage.setItem('userRole',JSON.stringify(""));
-              navigation.navigate("profile");
-            } else {
-              setLoading(false);
-              setAlert(true);
-              setAlertMessage("One or more field is invalid");
-            }
-          })
+      let access = AsyncStorage.getItem("access_token");
+      console.log(access);
+      let config = {
+        headers: {
+          Authorization: "Bearer " + access,
+        },
+      };
+      axios
+        .post(
+          "http://127.0.0.1:8000/api/user/changepassword/",
+          {
+            password: newPass,
+            password2: confirmPass,
+          },
+          config
         )
+        .then((r) =>{
+          navigation.navigate("PProfile");
+        })
         .catch(function (error) {
           setLoading(false);
           console.log(error, "change Password");
           setAlert(true);
-          setAlertMessage("Wrong password!");
+          setAlertMessage("Error");
         });
     } else {
       setLoading(false);
@@ -82,21 +71,7 @@ const ChangePass = ({ navigation }) => {
     setAlert(false);
     setAlertMessage("");
   };
-  function LoadingIndicatorView() {
-    // return <ActivityIndicator
-    //           color={theme.red}
-    //           size="large"
-    //           style={styles.activityIndicatorStyle}
-    //         />
-    return (
-      <View style={styles.activityIndicatorStyle}>
-        <Image
-          style={{ width: normalize(414), height: normalize(736) }}
-          source={require("../../assets/loading.gif")}
-        />
-      </View>
-    );
-  }
+
   if (loading) {
     return LoadingIndicatorView();
   } else
@@ -194,7 +169,8 @@ const ChangePass = ({ navigation }) => {
             <TouchableOpacity
               style={styles.loginBtn}
               onPress={() => {
-                navigation.navigate("profile");
+                changePass();
+                //navigation.navigate("PProfile");
               }}
             >
               <Text style={styles.loginText}>Confirm</Text>

@@ -11,7 +11,7 @@ import { normalize } from "../../Normalizer";
 import OTPTextView from "react-native-otp-textinput";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-
+import {useFonts} from 'expo-font';
 // import cred from "../../../cred";
 // const cheerio = require('cheerio');
 // import Data from "../Data";
@@ -29,7 +29,6 @@ const Login = ({ navigation, route }) => {
   const [token, setToken] = useState(null);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(false);
   const [otp, setOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
@@ -39,16 +38,8 @@ const Login = ({ navigation, route }) => {
   const [cToken, setCToken] = useState("");
   const [getPassword, setGetPassword] = useState(false);
   const [confirmPassword, setconfirmPassword] = useState("");
-  function LoadingIndicatorView() {
-    return (
-      <View style={styles.activityIndicatorStyle}>
-        <Image
-          style={{ width: normalize(414), height: iosHeight }}
-          source={require("../../assets/loading.gif")}
-        />
-      </View>
-    );
-  }
+
+
   const getCurrentUser = (userToken) => {
     console.log(userToken, "token in get user");
     axios
@@ -61,68 +52,40 @@ const Login = ({ navigation, route }) => {
           "userRole",
           JSON.stringify(response.data.usertype)
         );
-        setLoading(false);
-        navigation.navigate("Home");
+        navigation.navigate("MainLayout");
       })
       .catch(function (error) {
         console.log(error, "getuser");
       })
-      .then(function () {
-        // always executed
-      });
   };
 
   const handleLogin = () => {
     if (email == "" || password == "") {
-      // edited line added
-      // navigation.navigate("MainLayout");
+
       setAlert(true);
       setAlertMessage("PLEASE ENTER EMAIL AND PASSWORD");
-      setLoading(false);
     } else {
-      //setLoading(true);
-
-      // fetch("http://127.0.0.1:8000/api/user/login/", {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     email: email,
-      //     password: password,
-      //   }),
-      // })
       console.log(email, password, "email and password");
       axios
-        .post("http://127.0.0.1:8000/api/user/login/", {
-          email: email,
+        .post("http://10.10.22.24:8000/api/user/login/", {
+          email: email.toLowerCase(),
           password: password,
         })
-        .then((res) =>
-          {
-            console.log(res.data, "res");
-            if (res.data.token.access) {
-              console.log(data.token.access);
-              AsyncStorage.setItem("accesstoken", JSON.stringify(res.data.token.access));
-              AsyncStorage.setItem("refreshtoken", JSON.stringify(res.data.token.refresh));
-              setToken(res.data.token);
-            } else {
-              setEmail("");
-              setPassword("");
-              setAlert(true);
-              setAlertMessage("please enter valid credentials");
-              setLoading(false);
-            }
-          }
-        )
+        .then((res) => {
+          console.log(res.data.token.access);
+          AsyncStorage.setItem( "accesstoken", res.data.token.access);
+          AsyncStorage.setItem( "refreshtoken", res.data.token.refresh);
+          setToken(res.data.token);
+          navigation.navigate("MainLayout");
+        })
         .catch((err) => {
-          
           setAlert(true);
-          setAlertMessage("request failed");
-          //setAlertMessage(err.response.data.errors.non_field_errors);
-          setLoading(false);
+          //setAlertMessage("request failed");
+          setAlertMessage(err.response.data.errors.non_field_errors);
         });
     }
   };
   const handleLogout = () => {
-    setLoading(true);
     fetch("http://192.168.137.44:8000/auth/logout/", {
       method: "GET",
       headers: {
@@ -135,7 +98,6 @@ const Login = ({ navigation, route }) => {
       setToken(null);
       setEmail("");
       setPassword("");
-      setLoading(false);
       navigation.dispatch(
         CommonActions.reset({
           index: 1,
@@ -145,23 +107,19 @@ const Login = ({ navigation, route }) => {
     });
   };
   const getOtp = () => {
-    setLoading(true);
     axios(`http://192.168.137.44:8000${email}`, {
       method: "GET",
     })
       .then((responce) => {
         console.log(responce);
-        setLoading(false);
         setOtp(true);
       })
       .catch((error) => {
-        setLoading(false);
         setAlert(true);
         setAlertMessage("THERE MAY BE SOME PROBLEM");
       });
   };
   const verifyOtp = () => {
-    setLoading(true);
     console.log({ otp: otpCode });
     axios(`http://192.168.137.44:8000/${email}/`, {
       method: "POST",
@@ -176,10 +134,8 @@ const Login = ({ navigation, route }) => {
           console.log(response.data);
           setGetPassword(true);
         }
-        setLoading(false);
       })
       .catch(function (error) {
-        setLoading(false);
         setTimer(false);
         setAlert(true);
         setAlertMessage("THERE MAY BE SOME PROBLEM");
@@ -187,7 +143,6 @@ const Login = ({ navigation, route }) => {
       });
   };
   const handlePassword = () => {
-    setLoading(true);
     console.log({ pwd: password });
     console.log({ token: cToken });
     var form = new FormData();
@@ -202,12 +157,10 @@ const Login = ({ navigation, route }) => {
     }).then((r) =>
       r.json().then((data) => {
         if (data.code == 200) {
-          setLoading(false);
           setAlert(true);
           setAlertMessage("Success");
           setGetPassword(false);
         } else {
-          setLoading(false);
           setAlert(true);
           setAlertMessage("ERROR");
         }
@@ -253,9 +206,7 @@ const Login = ({ navigation, route }) => {
     setAlert(false);
     setAlertMessage("");
   };
-  if (loading) {
-    return LoadingIndicatorView();
-  } else if (getPassword) {
+ if (getPassword) {
     return (
       <ScrollView style={{ flex: 1, backgroundColor: "#151B22" }}>
         {alert ? <Alert message={alertMessage} setAlert={alerting} /> : null}
@@ -459,7 +410,7 @@ const Login = ({ navigation, route }) => {
               } else if (forgotPassword && otp) {
                 verifyOtp();
               } else {
-                navigation.navigate("Home");
+                navigation.navigate("MainLayout");
               }
             }}
           >

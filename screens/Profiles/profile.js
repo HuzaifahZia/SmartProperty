@@ -64,7 +64,6 @@ const PProfile = ({ navigation }) => {
               />
               <View style={styles.profileDescription}>
                 <Text style={styles.username}>Huzaifa</Text>
-                <Text style={styles.userType}>USER TYPE</Text>
               </View>
             </View>
             <View>

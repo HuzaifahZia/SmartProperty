@@ -45,20 +45,22 @@ const Register = ({ navigation, route }) => {
     }
     console.log(condition);
     if (condition) {
-      fetch("http://127.0.0.1:8000/api/user/register/", {
-        method: "POST",
-        body: JSON.stringify({
-          email: email,
+      console.log(email, password, "email and password");
+      axios
+        .post("http://10.10.22.24:8000/api/user/register/", {
+          email: email.toLowerCase(),
           name: name,
           phone: phonenumber,
           cnic: cnic,
           password: password,
           password2: password,
-        }),
-      })
+        })
         .then((res) => {
-          navigation.navigate("MainLayout");
           console.log(res.data);
+          AsyncStorage.setItem( "accesstoken", res.data.token.access);
+          AsyncStorage.setItem( "refreshtoken", res.data.token.refresh);
+          AsyncStorage.setItem("info", res.data.msg);
+          navigation.navigate("Otp");
         })
         .catch(function (error) {
           console.log(error, "register");
@@ -212,6 +214,7 @@ const Register = ({ navigation, route }) => {
           <TouchableOpacity
             style={styles.loginBtn}
             onPress={() => {
+              //navigation.navigate("Otp");
               register();
             }}
           >

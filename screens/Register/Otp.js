@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   StyleSheet,
 } from "react-native";
+import axios from "axios";
 const { width, height } = Dimensions.get("window");
 import { FlatList } from "react-native-gesture-handler";
 import { normalize } from "../../Normalizer";
@@ -26,107 +27,119 @@ import { Picker } from "react-native-woodpicker";
 
 const Otp = ({ navigation }) => {
   const [OTP, setOTP] = useState("");
+  const [email, setEmail] = useState("");
   const [alert, setAlert] = useState(false);
+  let token = AsyncStorage.getItem("accesstoken");
+  const getUser = useEffect(() => {
+    axios
+      .get("http://10.10.22.24:8000/api/user/profile/", {
+        headers: {"Authorization" : `Bearer ${token}`}
+      })
+      .then((res) => {
+        console.log(res.data);
+        setEmail(res.data.email);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        setErrors("User token is expired.");
+      });
+  }, []);
 
   const otp = () => {
-    var user = "0";
-
     var condition = false;
-    if (user == "0") {
-      condition = OTP != "";
+    if (OTP != "") {
+      condition = true;
     }
-    console.log(condition);
     if (condition) {
-      fetch("http://192.168.137.44:8000/auth/register/", {
-        method: "POST",
-        body: form,
-      })
-        .then((r) =>
-          r.json().then((data) => {
-            console.log(data);
-            if (data.token) {
-              console.log(data.token);
-              // AsyncStorage.setItem('token',JSON.stringify(data.token));
-              // AsyncStorage.setItem('userRole',JSON.stringify(""));
-              navigation.navigate("profile");
-            } else {
-              setAlert(true);
-              setAlertMessage("One or more field is invalid");
-            }
-          })
+      let access = AsyncStorage.getItem("access_token");
+      console.log(access, "access");
+      let config = {
+        headers: {
+          'Authorization': 'Bearer ' + access
+        }
+      };
+      axios
+        .post(
+          "http://10.10.22.24:8000/api/user/verify-email/",
+          { email: email, otp: otp },
+          config
         )
-        .catch(function (error) {
-          console.log(error, "change Password");
+        .then((r) => {
+          navigation.navigate("MainLayout");
+        })
+        .catch((error) => {
           setAlert(true);
-          setAlertMessage("Wrong password!");
+          setAlertMessage("Please enter valid OTP");
         });
     } else {
       setAlert(true);
-      setAlertMessage("One or more fields are invalid");
+      setAlertMessage("Please Enter OTP");
     }
   };
   const alerting = () => {
     setAlert(false);
     setAlertMessage("");
   };
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.background,
-          marginTop: getStatusBarHeight(),
-        }}
-      >
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: COLORS.background,
+        marginTop: getStatusBarHeight(),
+      }}
+    >
+      <View>
+        <IconButton
+          icon="chevron-left"
+          color={COLORS.white}
+          onPress={() => {
+            navigation.navigate("Register");
+          }}
+        />
+      </View>
+      <View>
         <View>
-          <IconButton
-            icon="chevron-left"
-            color={COLORS.white}
-            onPress={() => {
-              navigation.navigate("Register");
-            }}
-          />
-        </View>
-        <View>
-          <View>
-            <Text
-              style={{
-                fontSize: normalize(30),
-                fontWeight: "bold",
-                color: COLORS.white,
-                marginLeft: normalize(20),
-              }}
-            >
-              Otp
-            </Text>
-          </View>
-          <View
+          <Text
             style={{
-              flex: 1,
-              marginTop: normalize(30),
-              flexDirection: "column",
-              width: "100%",
+              fontSize: normalize(30),
+              fontWeight: "bold",
+              color: COLORS.white,
+              marginLeft: normalize(20),
             }}
           >
-            <View style={styles.inputView}>
-              <TextInput
-                style={[styles.TextInput, { width: "100%" }]}
-                placeholder="Description"
-                placeholderTextColor="#FFFFFF"
-              />
-            </View>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => {
-                navigation.navigate("MainLayout");
-              }}
-            >
-              <Text style={styles.loginText}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
+            Otp
+          </Text>
         </View>
-        <StatusBar backgroundColor={COLORS.background} />
-      </SafeAreaView>
-    );
+        <View
+          style={{
+            flex: 1,
+            marginTop: normalize(30),
+            flexDirection: "column",
+            width: "100%",
+          }}
+        >
+          <View style={styles.inputView}>
+            <TextInput
+              style={[styles.TextInput, { width: "100%" }]}
+              placeholder="OTP"
+              placeholderTextColor="#FFFFFF"
+              onChangeText={(otp) => setOTP(otp)}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => {
+              //navigation.navigate("MainLayout");
+              otp();
+            }}
+          >
+            <Text style={styles.loginText}>Confirm</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <StatusBar backgroundColor={COLORS.background} />
+    </SafeAreaView>
+  );
 };
 export default Otp;
 const styles = StyleSheet.create({
