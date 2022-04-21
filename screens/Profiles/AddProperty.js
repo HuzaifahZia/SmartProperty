@@ -25,16 +25,32 @@ import { PickerItem } from "react-native-woodpicker";
 import { Picker } from "react-native-woodpicker";
 
 const AddProperty = ({ navigation }) => {
-  const [open, setOpen] = useState(false);
-  const [oldPass, setoldPass] = useState("");
-  const [newPass, setnewPass] = useState("");
-  const [confirmPass, setconfirmPass] = useState("");
-  const [alert, setAlert] = useState(false);
-  const [showPassword, setShowPassword] = useState(true);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [radixId, setRadixId] = useState("0");
-  const [radixPwd, setRadixPwd] = useState("0");
+const { register, handleSubmit } = useForm();
+const onSubmitFun = (data) => {
+  console.log(data);
+};
+const { id } = useParams();
+const [title, setTitle] = useState("");
+const [price, setPrice] = useState("");
+const [category, setCategory] = useState("");
+const [subCategory, setSubCategory] = useState("");
+const [description, setDescription] = useState("");
+
+const [longitude, setLongitude] = useState("");
+const [latitude, setLatitude] = useState("");
+const [landArea, setLandArea] = useState("");
+const [unit, setUnit] = useState("");
+const [rooms, setRooms] = useState("");
+const [Bathrooms, setBathrooms] = useState("");
+const [structureType, setStructureType] = useState("");
+const [address, setAddress] = useState("");
+const [zipCode, setZipCode] = useState("");
+const [city, setCity] = useState("");
+const hiddenFileInput = useRef(null);
+const [picture1, setPicture1] = useState();
+const [picture2, setPicture2] = useState();
+const [picture3, setPicture3] = useState();
+
   const [Type, setType] = useState();
   const TypeList = [
     { label: "Residential", value: "Residential" },
@@ -64,25 +80,21 @@ const AddProperty = ({ navigation }) => {
             console.log(data);
             if (data.token) {
               console.log(data.token);
-              setLoading(false);
               // AsyncStorage.setItem('token',JSON.stringify(data.token));
               // AsyncStorage.setItem('userRole',JSON.stringify(""));
               navigation.navigate("profile");
             } else {
-              setLoading(false);
               setAlert(true);
               setAlertMessage("One or more field is invalid");
             }
           })
         )
         .catch(function (error) {
-          setLoading(false);
           console.log(error, "change Password");
           setAlert(true);
           setAlertMessage("Wrong password!");
         });
     } else {
-      setLoading(false);
       setAlert(true);
       setAlertMessage("One or more fields are invalid");
     }
@@ -91,24 +103,6 @@ const AddProperty = ({ navigation }) => {
     setAlert(false);
     setAlertMessage("");
   };
-  function LoadingIndicatorView() {
-    // return <ActivityIndicator
-    //           color={theme.red}
-    //           size="large"
-    //           style={styles.activityIndicatorStyle}
-    //         />
-    return (
-      <View style={styles.activityIndicatorStyle}>
-        <Image
-          style={{ width: normalize(414), height: normalize(736) }}
-          source={require("../../assets/loading.gif")}
-        />
-      </View>
-    );
-  }
-  if (loading) {
-    return LoadingIndicatorView();
-  } else
     return (
       <SafeAreaView
         style={{

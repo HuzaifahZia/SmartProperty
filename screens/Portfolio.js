@@ -1,5 +1,5 @@
 import { COLORS } from "../constants";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import Slider from "../components/Carousel";
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -25,7 +25,8 @@ import {
   Paragraph,
 } from "react-native-paper";
 import data from "../components/data";
-import StarRating from "react-native-star-rating";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { MainLayout } from "./MainLayout";
 //
@@ -42,10 +43,20 @@ const CARD_MARGIN = normalize(25);
 const Portfolio = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = React.useState(false);
+  const [PropertyData, setPropertyData] = React.useState([]);
   const [starCount, setStarCount] = React.useState(2.5);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+    const getproperty = useEffect(() => {
+      axios
+        .get("http://10.10.22.24:8000/api/property/")
+        .then((res) => {
+          console.log(res.data, "res");
+          setPropertyData(res.data);
+          //console.log(PropertyData);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+    }, []);
   const containerStyle = {
     justifyContent: "space-between",
     backgroundColor: COLORS.background,
@@ -81,15 +92,17 @@ const Portfolio = () => {
         value={searchQuery}
       />
       <FlatList
-        data={data.filter((item) => item.title.includes(searchQuery))}
+        data={PropertyData.filter((item) =>
+          item.PropertyTitle.includes(searchQuery)
+        )}
         style={styles.container}
-        renderItem={({ item, index }) => {
+        renderItem={({ item }) => {
           return (
             <TouchableHighlight underlayColor="none">
               <View style={styles.pcontainer}>
-                <Image style={styles.photo} source={{ uri: item.imgUrl }} />
-                <Text style={styles.price}>1.7 crore</Text>
-                <Text style={styles.title}>{item.title}</Text>
+                <Image style={styles.photo} source={{ uri: item.imgUrl1 }} />
+                <Text style={styles.price}>PKR {item.Price}</Text>
+                <Text style={styles.title}>{item.PropertyTitle}</Text>
                 <View style={styles.detailContainer}>
                   <View style={styles.iconContainer}>
                     <Icon
@@ -98,13 +111,13 @@ const Portfolio = () => {
                       style={{ marginRight: normalize(10) }}
                       size={normalize(20)}
                     />
-                    <Text style={styles.iconInfo}>3</Text>
+                    <Text style={styles.iconInfo}>{item.BedRooms}</Text>
                     <Icon
                       name={"shower"}
                       color={COLORS.white}
                       size={normalize(20)}
                     />
-                    <Text style={styles.iconInfo}>2</Text>
+                    <Text style={styles.iconInfo}>{item.BathRooms}</Text>
                   </View>
                   <View
                     style={{

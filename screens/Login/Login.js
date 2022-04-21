@@ -44,7 +44,7 @@ const Login = ({ navigation, route }) => {
     console.log(userToken, "token in get user");
     axios
       .get("http://192.168.137.44:8000/current-user", {
-        headers: { Authorization: `Token ${userToken}` },
+        headers: { "Authorization": `Token ${userToken}` },
       })
       .then(function (response) {
         setRole(response.data.usertype);
@@ -72,15 +72,14 @@ const Login = ({ navigation, route }) => {
           password: password,
         })
         .then((res) => {
-          console.log(res.data.token.access);
-          AsyncStorage.setItem( "accesstoken", res.data.token.access);
-          AsyncStorage.setItem( "refreshtoken", res.data.token.refresh);
-          setToken(res.data.token);
+          const access = JSON.stringify(res.data.token.access);
+          const refresh = JSON.stringify(res.data.token.refresh);
+          AsyncStorage.setItem( "accesstoken", access);
+          AsyncStorage.setItem( "refreshtoken", refresh);
           navigation.navigate("MainLayout");
         })
         .catch((err) => {
           setAlert(true);
-          //setAlertMessage("request failed");
           setAlertMessage(err.response.data.errors.non_field_errors);
         });
     }
@@ -89,11 +88,11 @@ const Login = ({ navigation, route }) => {
     fetch("http://192.168.137.44:8000/auth/logout/", {
       method: "GET",
       headers: {
-        Authorization: `Token ${token}`,
+        "Authorization": `Token ${token}`,
       },
     }).then(() => {
       AsyncStorage.removeItem("userRole");
-      AsyncStorage.removeItem("token");
+      AsyncStorage.removeItem("accesstoken");
       setRole(null);
       setToken(null);
       setEmail("");
@@ -107,40 +106,63 @@ const Login = ({ navigation, route }) => {
     });
   };
   const getOtp = () => {
-    axios(`http://192.168.137.44:8000${email}`, {
-      method: "GET",
-    })
-      .then((responce) => {
-        console.log(responce);
+     if (email == "") {
+      setAlert(true);
+      setAlertMessage("PLEASE ENTER EMAIL");
+    } else {
+    console.log(email, "email");
+    axios
+      .post("http://10.10.22.24:8000/api/user/send-reset-password-email/", {
+        email: email.toLowerCase,
+      })
+      .then((res) => {
+        console.log(res);
         setOtp(true);
       })
-      .catch((error) => {
-        setAlert(true);
-        setAlertMessage("THERE MAY BE SOME PROBLEM");
+      .catch((err) => {
+        console.log(err);
+        if (err.response.data.errors.hasOwnProperty("non_field_errors")) {
+          setAlert(true);
+          setAlertMessage("THERE MAY BE SOME PROBLEM");
+          console.log(err.response.data.errors.non_field_errors);
+        }
       });
+    }
   };
   const verifyOtp = () => {
     console.log({ otp: otpCode });
-    axios(`http://192.168.137.44:8000/${email}/`, {
-      method: "POST",
-      data: { otp: otpCode },
-    })
-      .then(function (response) {
-        console.log(response);
-        if (response.status == 200) {
+    // axios(`http://192.168.137.44:8000/${email}/`, {
+    //   method: "POST",
+    //   data: { otp: otpCode },
+    // })
+    //   .then(function (response) {
+    //     console.log(response);
+    //     if (response.status == 200) {
+    //       setOtp(false);
+    //       setForgotPassword(false);
+    //       setCToken(response.data);
+    //       console.log(response.data);
+    //       setGetPassword(true);
+    //     }
+    //   })
+      axios
+        .post("http://10.10.22.24:8000/api/user/verify-token/", {
+          otp: tokenKey,
+        })
+        .then((res) => {
+          AsyncStorage.setItem("accesstoken", res.data.token.access);
+          AsyncStorage.setItem("refreshtoken", res.data.token.refresh);
           setOtp(false);
           setForgotPassword(false);
-          setCToken(response.data);
-          console.log(response.data);
+          //console.log(res.data);
           setGetPassword(true);
-        }
-      })
-      .catch(function (error) {
-        setTimer(false);
-        setAlert(true);
-        setAlertMessage("THERE MAY BE SOME PROBLEM");
-        console.log(error);
-      });
+        })
+        .catch(function (err) {
+          setTimer(false);
+          setAlert(true);
+          setAlertMessage("THERE MAY BE SOME PROBLEM");
+          console.log(err.response.data.error);
+        });
   };
   const handlePassword = () => {
     console.log({ pwd: password });
@@ -164,7 +186,7 @@ const Login = ({ navigation, route }) => {
           setAlert(true);
           setAlertMessage("ERROR");
         }
-        console.log(data);
+        //console.log(data);
       })
     );
   };
@@ -177,7 +199,7 @@ const Login = ({ navigation, route }) => {
       AsyncStorage.getItem("userRole")
         .then((role) => {
           if (role != null) {
-            console.log("role", role);
+            //console.log("role", role);
             setRole(role);
           }
         })
@@ -187,7 +209,7 @@ const Login = ({ navigation, route }) => {
       AsyncStorage.getItem("token")
         .then((token) => {
           if (token != null) {
-            console.log("token", token);
+            //("token", token);
             setToken(token);
           }
         })
@@ -197,7 +219,7 @@ const Login = ({ navigation, route }) => {
     }
   }, [route]);
   useEffect(() => {
-    console.log("token", token, "role", role);
+    //console.log("token", token, "role", role);
     if (role || token) {
       navigation.navigate("MainLayout");
     }

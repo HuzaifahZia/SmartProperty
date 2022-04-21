@@ -17,200 +17,179 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { COLORS, icons } from "../../constants";
 import { Button, IconButton, Card, List } from "react-native-paper";
-import { color } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
+
 
 const PProfile = ({ navigation }) => {
-  useEffect(() => {
-    AsyncStorage.getItem("token").then((token) => {
-      if (token != null) {
-        console.log("token", token);
-        getCurrentUser(token);
+  const [Name, setName] = useState("");
+  const [data, setData] = useState([]);
+  const [Email, setEmail] = useState("");
+  const [Phone, setPhone] = useState("");
+  const [Cnic, setCnic] = useState("");
+  const [access, setAccess] = useState("");
+  let Data ;
+  useEffect((Data) => {
+    async function fetchMyAPI() {
+      try{
+      const token = await AsyncStorage.getItem("accesstoken")  
+      setAccess(JSON.parse(token));
+        console.log(access);
+        //api call
+        const temp = JSON.parse(token);
+        const res = await axios
+          .get("http://10.10.22.24:8000/api/user/profile/", {
+            headers: { "Authorization": `Bearer ${temp}` },
+          })
+          console.log (res.data);
+          setEmail(res.data.email);
+          setName(res.data.name);
+          setPhone(res.data.phone);
+          setCnic(res.data.cnic);
+          Data = res.Data;
+          }
+      catch(err){
+        console.log(err);
       }
-    });
-  });
+    }
+    fetchMyAPI();
+  }, []);
 
   const { width, height } = Dimensions.get("window");
   const SCREEN_WIDTH = width < height ? width : height;
 
-  const getCurrentUser = (userToken) => {
-    console.log(userToken, "token in get user");
-    axios
-      .get("http://192.168.137.44:8000/current-user/", {
-        headers: { Authorization: `Token ${userToken}` },
-      })
-      .then(function (response) {
-        setRole(response.data.usertype);
-        //   AsyncStorage.setItem('userRole',JSON.stringify(response.data.usertype));
-        setLoading(false);
-        navigation.navigate("Home");
-      })
-      .catch(function (error) {
-        console.log(error, "getuser");
-      })
-      .then(function () {
-        // always executed
-      });
-  };
-
   return (
     <ScrollView style={{ flex: 1, backgroundColor: COLORS.background }}>
-      <View style={styles.container}>
-        <View style={styles.body}>
-          <View style={{ flex: 1 }}>
-            <View style={styles.body}>
-              <Image
-                source={require("../../assets/myamonn-icons/use.png")}
-                style={{ height: normalize(100), width: normalize(100) }}
-              />
-              <View style={styles.profileDescription}>
-                <Text style={styles.username}>Huzaifa</Text>
-              </View>
-            </View>
-            <View>
-              <Card
-                style={{
-                  borderRadius: normalize(30),
-                  resizemode: "contain",
-                  backgroundColor: "#2F353C",
-                  justifyContent: "flex-start",
-                  width: SCREEN_WIDTH - normalize(40),
-                  flex: 1,
-                  marginTop: normalize(20),
-                }}
-              >
-                <Card.Content>
-                  <View>
-                    <List.Section>
-                      <List.Item
-                        style={styles.lstItem}
-                        titleStyle={{ color: "white" }}
-                        title="Full-Name"
-                        left={() => (
-                          <List.Icon icon="skull-outline" color="white" />
-                        )}
-                      />
-                      <List.Item
-                        style={styles.lstItem}
-                        titleStyle={{ color: "white" }}
-                        title="Contact email"
-                        left={() => (
-                          <List.Icon icon="email-outline" color="white" />
-                        )}
-                      />
-                      <List.Item
-                        style={styles.lstItem}
-                        titleStyle={{ color: "white" }}
-                        title="Number"
-                        left={() => <List.Icon icon="phone" color="white" />}
-                      />
-                      <List.Item
-                        style={styles.lstItem}
-                        titleStyle={{ color: "white" }}
-                        title="Address"
-                        left={() => <List.Icon color="white" icon="home" />}
-                      />
-                    </List.Section>
+            <View style={styles.container}>
+              <View style={styles.body}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.body}>
+                    <Image
+                      source={require("../../assets/myamonn-icons/use.png")}
+                      style={{ height: normalize(100), width: normalize(100) }}
+                    />
+                    <View style={styles.profileDescription}>
+                      <Text style={styles.username}>{Name}</Text>
+                    </View>
                   </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "center",
+
+                  <View>
+                    <Card
+                      style={{
+                        borderRadius: normalize(30),
+                        resizemode: "contain",
+                        backgroundColor: "#2F353C",
+                        justifyContent: "flex-start",
+                        width: SCREEN_WIDTH - normalize(40),
+                        flex: 1,
+                        marginTop: normalize(20),
+                      }}
+                    >
+                      <Card.Content>
+                        <View>
+                          <List.Section>
+                            <List.Item
+                              style={styles.lstItem}
+                              titleStyle={{ color: "white" }}
+                              title={Name}
+                              left={() => (
+                                <List.Icon icon="skull-outline" color="white" />
+                              )}
+                            />
+                            <List.Item
+                              style={styles.lstItem}
+                              titleStyle={{ color: "white" }}
+                              title={Email}
+                              left={() => (
+                                <List.Icon icon="email-outline" color="white" />
+                              )}
+                            />
+                            <List.Item
+                              style={styles.lstItem}
+                              titleStyle={{ color: "white" }}
+                              title={Phone}
+                              left={() => (
+                                <List.Icon icon="phone" color="white" />
+                              )}
+                            />
+                            <List.Item
+                              style={styles.lstItem}
+                              titleStyle={{ color: "white" }}
+                              title={Cnic}
+                              left={() => (
+                                <List.Icon
+                                  color="white"
+                                  icon="badge-account-outline"
+                                />
+                              )}
+                            />
+                          </List.Section>
+                        </View>
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <IconButton
+                            icon={icons.briefcase}
+                            color="white"
+                            onPress={() => {
+                              navigation.navigate("Portfolio");
+                            }}
+                            size={25}
+                            style={{ borderColor: "white", borderWidth: 1 }}
+                          />
+                          <IconButton
+                            icon="key-variant"
+                            color="white"
+                            onPress={() => {
+                              navigation.navigate("ChangePass");
+                            }}
+                            size={25}
+                            style={styles.Optionbtn}
+                          />
+                          <IconButton
+                            icon="upload"
+                            color="white"
+                            size={25}
+                            onPress={() => {
+                              navigation.navigate("AddProperty");
+                            }}
+                            style={styles.Optionbtn}
+                          />
+                          <IconButton
+                            icon="pencil"
+                            color="white"
+                            onPress={() => {
+                              navigation.navigate("EditProfile");
+                            }}
+                            size={25}
+                            style={styles.Optionbtn}
+                          />
+                        </View>
+                      </Card.Content>
+                    </Card>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: normalize(50),
+                  }}
+                >
+                  <TouchableOpacity
+                    style={styles.loginBtn}
+                    onPress={() => {
+                      navigation.navigate("Login", { action: "logout" });
                     }}
                   >
-                    <IconButton
-                      icon={icons.briefcase}
-                      color="white"
-                      onPress={() => {
-                        navigation.navigate("Portfolio");
-                      }}
-                      size={25}
-                      style={{ borderColor: "white", borderWidth: 1 }}
-                    />
-                    <IconButton
-                      icon="key-variant"
-                      color="white"
-                      onPress={() => {
-                        navigation.navigate("ChangePass");
-                      }}
-                      size={25}
-                      style={styles.Optionbtn}
-                    />
-                    <IconButton
-                      icon="upload"
-                      color="white"
-                      size={25}
-                      onPress={() => {
-                        navigation.navigate("AddProperty");
-                      }}
-                      style={styles.Optionbtn}
-                    />
-                    <IconButton
-                      icon="pencil"
-                      color="white"
-                      onPress={() => {
-                        navigation.navigate("EditProfile");
-                      }}
-                      size={25}
-                      style={styles.Optionbtn}
-                    />
-                  </View>
-                </Card.Content>
-              </Card>
-            </View>
-          </View>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: normalize(50),
-            }}
-          >
-            {/* <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                setEdit("personal");
-              }}
-            >
-              <Text style={styles.editButtonText}>PERSONAL INFORMATION</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => setEdit("password")}
-            >
-              <Text style={styles.editButtonText}>CHANGE PASSWORD</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                setEdit("property");
-              }}
-            >
-              <Text style={styles.editButtonText}>ADD PROPERTY</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                setEdit("property");
-              }}
-            >
-              <Text style={styles.editButtonText}>ABOUT</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => {
-                navigation.navigate("Login", { action: "logout" });
-              }}
-            >
-              <Text style={styles.loginText}>{"Logout"}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+                    <Text style={styles.loginText}>{"Logout"}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>      
     </ScrollView>
   );
 };
@@ -260,7 +239,7 @@ const styles = StyleSheet.create({
     fontFamily: "OpenSansCondensedLight",
     fontSize: normalize(14),
   },
-  Optionbtn:{
+  Optionbtn: {
     borderColor: "white",
     borderWidth: 1,
     marginLeft: normalize(20),

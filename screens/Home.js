@@ -1,5 +1,5 @@
 import { COLORS } from "../constants";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import Slider from "../components/Carousel";
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -12,6 +12,7 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Image,
+  LogBox,
 } from "react-native";
 import { normalize } from "../Normalizer";
 import {
@@ -25,9 +26,12 @@ import {
   Paragraph,
 } from "react-native-paper";
 import data from "../components/data";
-import StarRating from "react-native-star-rating";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { MainLayout } from "./MainLayout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+LogBox.ignoreAllLogs();
+console.disableYellowBox = true;
 //
 const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
 const numColums = 2;
@@ -41,9 +45,21 @@ const CARD_MARGIN = normalize(25);
 
 const Home = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [PropertyData, setPropertyData] = React.useState([]);
   const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = React.useState(false);
   const [starCount, setStarCount] = React.useState(2.5);
+  const getproperty = useEffect(() => {
+    axios
+      .get("http://10.10.22.24:8000/api/property/")
+      .then((res) => {
+        console.log(res.data, "res");
+        setPropertyData(res.data);
+        //console.log(PropertyData);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+    }, []);
 
   const containerStyle = {
     justifyContent: "space-between",
@@ -82,15 +98,15 @@ const Home = ({ navigation }) => {
         value={searchQuery}
       />
       <FlatList
-        data={data.filter((item) => item.title.includes(searchQuery))}
+        data={PropertyData.filter((item) => item.PropertyTitle.includes(searchQuery))}
         style={styles.container}
-        renderItem={({ item, index }) => {
+        renderItem={({ item }) => {
           return (
             <View>
               <View style={styles.pcontainer}>
-                <Image style={styles.photo} source={{ uri: item.imgUrl }} />
-                <Text style={styles.price}>PKR 4 crore</Text>
-                <Text style={styles.title}>{item.title}</Text>
+                <Image style={styles.photo} source={{ uri: item.image1 }} />
+                <Text style={styles.price}>PKR {item.Price}</Text>
+                <Text style={styles.title}>{item.PropertyTitle}</Text>
                 <View style={styles.detailContainer}>
                   <View style={styles.iconContainer}>
                     <Icon
@@ -99,13 +115,13 @@ const Home = ({ navigation }) => {
                       style={{ marginRight: normalize(10) }}
                       size={normalize(30)}
                     />
-                    <Text style={styles.iconInfo}>3</Text>
+                    <Text style={styles.iconInfo}>{item.BedRooms}</Text>
                     <Icon
                       name={"shower"}
                       color={COLORS.white}
                       size={normalize(30)}
                     />
-                    <Text style={styles.iconInfo}>2</Text>
+                    <Text style={styles.iconInfo}>{item.BathRooms}</Text>
                   </View>
                   <View
                     style={{
@@ -122,14 +138,14 @@ const Home = ({ navigation }) => {
                       size={normalize(30)}
                       style={{ marginRight: normalize(9) }}
                     />
-                    <Text style={styles.iconInfo}>22 marla</Text>
+                    <Text style={styles.iconInfo}>{item.LandArea} {item.Unit}</Text>
                   </View>
                 </View>
               </View>
               <TouchableHighlight
                 style={styles.chat}
                 onPress={() => {
-                  navigation.navigate("ViewProperty", {item:item});
+                  navigation.navigate("ViewProperty", { item: item });
                 }}
               >
                 <Text style={styles.chattxt}>Buy</Text>
@@ -139,7 +155,6 @@ const Home = ({ navigation }) => {
         }}
         keyExtractor={(item, index) => index.toString()}
       />
-      
     </ScrollView>
   );
 };

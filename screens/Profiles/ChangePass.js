@@ -12,7 +12,6 @@ import {
   StyleSheet,
 } from "react-native";
 const { width, height } = Dimensions.get("window");
-import { FlatList } from "react-native-gesture-handler";
 import { normalize } from "../../Normalizer";
 import { COLORS } from "../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,6 +20,8 @@ import { getStatusBarHeight } from "react-native-status-bar-height";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors, IconButton } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
+import axios from "axios";
+
 
 const ChangePass = ({ navigation }) => {
   const [oldPass, setoldPass] = useState("");
@@ -29,38 +30,35 @@ const ChangePass = ({ navigation }) => {
   const [alert, setAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
   const [alertMessage, setAlertMessage] = useState("");
+  const [access, setAccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const changePass = () => {
+  const changePass = async() => {
     var condition = false;
     if (oldPass != "" && newPass != "" && confirmPass != "") {
       condition = true;
     }
     if (condition) {
-      let access = AsyncStorage.getItem("access_token");
-      console.log(access);
-      let config = {
-        headers: {
-          Authorization: "Bearer " + access,
-        },
-      };
-      axios
-        .post(
-          "http://127.0.0.1:8000/api/user/changepassword/",
+      try{
+      const token = await AsyncStorage.getItem("accesstoken")  
+      setAccess(JSON.parse(token));
+        console.log(access);
+        //api call
+        const temp = JSON.parse(token);
+        const res = await axios
+          .post("http://10.10.22.24:8000/api/user/changepassword/",
           {
             password: newPass,
             password2: confirmPass,
-          },
-          config
-        )
-        .then((r) =>{
-          navigation.navigate("PProfile");
-        })
-        .catch(function (error) {
-          setLoading(false);
-          console.log(error, "change Password");
+          }, {
+            headers: { "Authorization": `Bearer ${temp}` },
+          })
           setAlert(true);
-          setAlertMessage("Error");
-        });
+          setAlertMessage("Password Changed Successfully");
+          //navigation.navigate("PProfile");
+        }
+      catch(err){
+        console.log(err);
+      }
     } else {
       setLoading(false);
       setAlert(true);
@@ -83,11 +81,14 @@ const ChangePass = ({ navigation }) => {
           marginTop: getStatusBarHeight(),
         }}
       >
-        <View >
+        {alert ? <Alert message={alertMessage} setAlert={alerting} /> : null}
+        <View>
           <IconButton
             icon="chevron-left"
             color={COLORS.white}
-            onPress={() => {navigation.navigate("PProfile")}}
+            onPress={() => {
+              navigation.navigate("PProfile");
+            }}
           />
         </View>
         <View>
@@ -125,12 +126,6 @@ const ChangePass = ({ navigation }) => {
                 secureTextEntry={showPassword}
                 onChangeText={(oldPass) => setoldPass(oldPass)}
               />
-              <Icon
-                onPress={() => setShowPassword((prev) => !prev)}
-                name={showPassword ? "eye-off" : "eye"}
-                color={"white"}
-                size={normalize(18)}
-              />
             </View>
             <View
               style={[
@@ -144,13 +139,7 @@ const ChangePass = ({ navigation }) => {
                 placeholder="New Password"
                 placeholderTextColor="#FFFFFF"
                 secureTextEntry={showPassword}
-                onChangeText={(newPass) => setnewPass(newPassw)}
-              />
-              <Icon
-                onPress={() => setShowPassword((prev) => !prev)}
-                name={showPassword ? "eye-off" : "eye"}
-                color={"white"}
-                size={normalize(18)}
+                onChangeText={(newPass) => setnewPass(newPass)}
               />
             </View>
             <View
@@ -163,6 +152,7 @@ const ChangePass = ({ navigation }) => {
                 style={[styles.TextInput, { width: "100%" }]}
                 placeholder="Confirm Password"
                 placeholderTextColor="#FFFFFF"
+                secureTextEntry={showPassword}
                 onChangeText={(confirmPass) => setconfirmPass(confirmPass)}
               />
             </View>
